@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Тетрадь благодарности</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Marck+Script&family=PT+Serif:ital,wght@0,400;0,700;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: страница школьной тетради в клетку с красным полем слева; расписание уроков, признание у доски и листок для письма. Тёмная тема = школьная доска с мелом. */
+  :root {
+    --paper: #F8F9FC;
+    --grid: #DDE6F6;
+    --card: #FFFFFF;
+    --fg: #1E2440;
+    --muted: #57608A;
+    --pen: #2B49B5;
+    --red: #D0342C;
+    --margin: #E2645C;
+    --line: #B9C7E4;
+    --sticker: #F5D04E;
+    --on-sticker: #2A2200;
+    color-scheme: light;
+    --font-hand: 'Marck Script', 'Segoe Script', 'Comic Sans MS', cursive;
+    --font-body: 'PT Serif', Georgia, 'Times New Roman', serif;
+    --font-mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #16241F; --grid: #223730; --card: #1D2F29; --fg: #EDF1E8; --muted: #A9B9AE;
+      --pen: #A6C8FF; --red: #FF9C8A; --margin: #D9786C; --line: #3B5A51;
+      --sticker: #F2D06B; --on-sticker: #2A2200; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #16241F; --grid: #223730; --card: #1D2F29; --fg: #EDF1E8; --muted: #A9B9AE;
+    --pen: #A6C8FF; --red: #FF9C8A; --margin: #D9786C; --line: #3B5A51;
+    --sticker: #F2D06B; --on-sticker: #2A2200; color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  [hidden] { display: none !important; }
+  body {
+    background-color: var(--paper);
+    background-image:
+      linear-gradient(var(--grid) 1px, transparent 1px),
+      linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+    background-size: 26px 26px;
+    color: var(--fg);
+    font-family: var(--font-body);
+    font-size: 18px;
+    line-height: 1.65;
+    margin: 0;
+  }
+  h1, h2, h3 { text-wrap: balance; font-weight: 400; margin: 0; }
+  p { margin: 0; }
+
+  .sheet {
+    position: relative;
+    max-width: 880px;
+    margin-inline: auto;
+    padding-block: 32px 72px;
+    padding-inline: 48px 18px;
+  }
+  .sheet::before {
+    content: "";
+    position: absolute;
+    top: 0; bottom: 0; left: 30px;
+    width: 2px;
+    background: var(--margin);
+    opacity: .75;
+  }
+  section { padding-block: 44px 8px; }
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: .74rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  h2 {
+    font-family: var(--font-hand);
+    font-size: clamp(2.1rem, 6.4vw, 3.1rem);
+    line-height: 1.1;
+    color: var(--pen);
+    margin-block: 6px 16px;
+  }
+
+  /* Hero */
+  .cover {
+    background: var(--card);
+    border: 2px solid var(--pen);
+    border-radius: 6px;
+    padding: 14px 16px 16px;
+    max-width: 470px;
+    transform: rotate(-1deg);
+  }
+  .cover-title {
+    font-family: var(--font-mono);
+    font-size: .72rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding-bottom: 8px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+  }
+  .cover dl { margin: 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; align-items: baseline; }
+  .cover dt { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+  .cover dd { margin: 0; font-family: var(--font-hand); font-size: 1.3rem; line-height: 1.3; color: var(--pen); border-bottom: 1px dotted var(--line); }
+
+  h1 {
+    font-family: var(--font-hand);
+    font-size: clamp(3.3rem, 15vw, 7rem);
+    line-height: 1;
+    color: var(--pen);
+    margin-top: 34px;
+  }
+  h1 .underlined { border-bottom: 4px double var(--red); }
+  .to {
+    font-family: var(--font-hand);
+    font-size: clamp(1.7rem, 6vw, 2.5rem);
+    line-height: 1.2;
+    margin-top: 10px;
+  }
+  .lead { max-width: 34rem; margin-top: 22px; font-size: 1.1rem; }
+  .hero-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 16px 22px; margin-top: 26px; }
+  .bell-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--sticker); color: var(--on-sticker);
+    border: 2px solid var(--on-sticker);
+    border-radius: 999px;
+    padding: 8px 20px 8px 14px;
+    font-family: var(--font-hand); font-size: 1.35rem; line-height: 1.2;
+    cursor: pointer;
+  }
+  .bell-btn svg { transform-origin: 50% 12%; }
+  .bell-btn.ring svg { animation: swing .9s ease-in-out; }
+  @keyframes swing {
+    0% { transform: rotate(0); } 15% { transform: rotate(22deg); } 35% { transform: rotate(-18deg); }
+    55% { transform: rotate(12deg); } 75% { transform: rotate(-6deg); } 100% { transform: rotate(0); }
+  }
+  .bell-note { font-family: var(--font-hand); font-size: 1.3rem; color: var(--red); min-height: 1.6em; }
+  .redpen {
+    display: inline-block;
+    margin-top: 22px;
+    font-family: var(--font-hand);
+    font-size: 1.6rem;
+    color: var(--red);
+    transform: rotate(-3deg);
+    border: 2px solid var(--red);
+    border-radius: 50% / 60%;
+    padding: 2px 20px 4px;
+  }
+
+  /* Расписание */
+  .timetable { list-style: none; margin: 22px 0 0; padding: 0; }
+  .timetable li {
+    display: grid;
+    grid-template-columns: 5.2rem minmax(0, 1fr);
+    gap: 4px 16px;
+    padding-block: 18px;
+    border-bottom: 1px dashed var(--line);
+  }
+  .lesson-no { font-family: var(--font-mono); font-size: .78rem; letter-spacing: .04em; color: var(--muted); line-height: 1.5; }
+  .lesson-no b { display: block; font-family: var(--font-hand); font-weight: 400; font-size: 2.6rem; line-height: 1; color: var(--red); letter-spacing: 0; }
+  .timetable h3 { font-family: var(--font-hand); font-size: 1.7rem; line-height: 1.2; color: var(--pen); }
+  .timetable p { margin-top: 4px; }
+  .timetable .last p strong { color: var(--red); font-weight: 700; }
+
+  /* Признание */
+  fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+  .confess-list { display: grid; gap: 10px; margin-top: 20px; }
+  .check {
+    display: flex; align-items: flex-start; gap: 14px;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 12px 14px;
+    cursor: pointer;
+  }
+  .check input {
+    appearance: none; -webkit-appearance: none;
+    flex: none;
+    width: 28px; height: 28px;
+    margin: 2px 0 0;
+    border: 2px solid var(--pen);
+    border-radius: 3px;
+    background: transparent;
+    position: relative;
+    cursor: pointer;
+  }
+  .check input:checked::after {
+    content: "";
+    position: absolute;
+    left: 7px; top: -7px;
+    width: 10px; height: 22px;
+    border: solid var(--red);
+    border-width: 0 4px 4px 0;
+    transform: rotate(38deg);
+  }
+  .check span { min-width: 0; }
+  .check:has(input:checked) { border-color: var(--pen); }
+  .verdict {
+    margin-top: 18px;
+    font-family: var(--font-hand);
+    font-size: 1.6rem;
+    line-height: 1.3;
+    color: var(--red);
+    min-height: 2.6em;
+  }
+  .verdict small { display: block; font-family: var(--font-body); font-size: .9rem; color: var(--muted); }
+
+  /* Благодарность */
+  .thanks p { max-width: 36rem; }
+  .thanks p + p { margin-top: 14px; }
+  .fives { list-style: none; margin: 22px 0 0; padding: 0; display: grid; gap: 12px; }
+  .fives li { display: grid; grid-template-columns: 38px minmax(0, 1fr); gap: 14px; align-items: start; }
+  .fives li::before {
+    content: "5";
+    width: 34px; height: 34px;
+    display: grid; place-items: center;
+    border: 2px solid var(--red);
+    border-radius: 50%;
+    font-family: var(--font-hand); font-size: 1.35rem; line-height: 1; color: var(--red);
+    transform: rotate(-6deg);
+  }
+  .fives li span { padding-top: 3px; }
+
+  /* Письмо */
+  .letter-card {
+    background: var(--card);
+    border: 2px solid var(--pen);
+    border-radius: 6px;
+    padding: 18px 16px 20px;
+    margin-top: 22px;
+  }
+  .letter-head {
+    display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px;
+    font-family: var(--font-mono); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted);
+    padding-bottom: 10px; border-bottom: 1px solid var(--line);
+  }
+  .letter-to { font-family: var(--font-hand); font-size: 1.7rem; color: var(--pen); line-height: 1.25; margin-top: 12px; }
+  .letter-card textarea {
+    display: block; width: 100%; min-width: 0;
+    margin-top: 10px;
+    padding: 5px 4px 0;
+    min-height: 15.4rem;
+    resize: vertical;
+    border: 0; border-radius: 0;
+    color: var(--pen);
+    background-color: transparent;
+    background-image: repeating-linear-gradient(transparent 0, transparent calc(2.2rem - 1px), var(--line) calc(2.2rem - 1px), var(--line) 2.2rem);
+    background-attachment: local;
+    font-family: var(--font-hand);
+    font-size: 1.55rem;
+    line-height: 2.2rem;
+  }
+  .letter-card textarea::placeholder { color: var(--muted); opacity: .85; }
+  .letter-card textarea:disabled { opacity: .75; }
+  .letter-foot { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; margin-top: 8px; }
+  .counter { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .06em; color: var(--muted); }
+  .send {
+    background: var(--sticker); color: var(--on-sticker);
+    border: 2px solid var(--on-sticker); border-radius: 999px;
+    padding: 8px 22px;
+    font-family: var(--font-hand); font-size: 1.4rem; line-height: 1.2;
+    cursor: pointer;
+  }
+  .send:disabled { opacity: .55; cursor: default; }
+  .form-msg { font-family: var(--font-hand); font-size: 1.4rem; line-height: 1.3; color: var(--red); margin-top: 14px; min-height: 1.4em; }
+
+  /* Письма (страница с #results) */
+  body.view-results .sheet > header,
+  body.view-results .sheet > section:not(#results),
+  body.view-results .sheet > .final { display: none; }
+  .letters { display: grid; gap: 16px; margin-top: 20px; }
+  .letter {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 14px 16px 16px;
+  }
+  .letter-no { font-family: var(--font-mono); font-size: .7rem; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .letter-text { margin-top: 8px; font-family: var(--font-hand); font-size: 1.6rem; line-height: 1.45; color: var(--pen); white-space: pre-wrap; overflow-wrap: anywhere; }
+  .empty { color: var(--muted); font-style: italic; }
+  #results .send { margin-top: 18px; }
+
+  /* Подпись */
+  .final { display: flex; flex-wrap: wrap; align-items: center; gap: 24px 36px; padding-block: 56px 8px; }
+  .final-text { flex: 1 1 320px; min-width: 0; }
+  .final .with { font-family: var(--font-hand); font-size: 1.5rem; color: var(--muted); }
+  .signature {
+    font-family: var(--font-hand);
+    font-size: clamp(2.3rem, 9.5vw, 4.2rem);
+    line-height: 1.1;
+    color: var(--pen);
+    margin-top: 4px;
+    text-wrap: balance;
+  }
+  .stamp {
+    flex: none;
+    width: 124px; height: 124px;
+    border: 3px double var(--red);
+    border-radius: 50%;
+    display: grid; place-content: center; text-align: center;
+    color: var(--red);
+    font-family: var(--font-mono); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; line-height: 1.5;
+    transform: rotate(-12deg);
+    opacity: .9;
+  }
+  .stamp b { display: block; font-family: var(--font-hand); font-weight: 400; font-size: 1.9rem; letter-spacing: 0; text-transform: none; line-height: 1.1; }
+
+  canvas#confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 20; }
+  :focus-visible { outline: 3px solid var(--red); outline-offset: 3px; }
+  @media (prefers-reduced-motion: reduce) {
+    .bell-btn.ring svg { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<main class="sheet">
+  <header>
+    <div class="cover">
+      <div class="cover-title">Тетрадь · 12 листов · в клетку</div>
+      <dl>
+        <dt>Предмет</dt><dd>«Спасибо»</dd>
+        <dt>Ученик</dt><dd>Шахрух Пиримбетов</dd>
+        <dt>Учитель</dt><dd>Гульмира Кенесбаевна</dd>
+        <dt>Дата</dt><dd>1 октября</dd>
+      </dl>
+    </div>
+
+    <h1>С <span class="underlined">Днём</span> учителя!</h1>
+    <p class="to">Дорогая Гульмира Кенесбаевна</p>
+    <p class="lead">Закройте на минуту журнал. Сегодня спрашиваю я. Тема урока: вы, когда вам было семь лет, и вы шли в первый класс с букетом больше себя.</p>
+
+    <div class="hero-actions">
+      <button class="bell-btn" id="bell" type="button">
+        <svg viewBox="0 0 64 64" width="34" height="34" aria-hidden="true"><path d="M32 6c-11 0-18 8-18 20v10l-6 8h48l-6-8V26C50 14 43 6 32 6z" fill="currentColor"/><circle cx="32" cy="54" r="5" fill="currentColor"/></svg>
+        Дать звонок
+      </button>
+      <span class="bell-note" id="bellNote" aria-live="polite"></span>
+    </div>
+    <span class="redpen">Отлично! Читайте дальше</span>
+  </header>
+
+  <section>
+    <div class="eyebrow">Сегодня, 1 октября</div>
+    <h2>Расписание воспоминаний</h2>
+    <p>Пять уроков. Домашнее задание не задано, только улыбаться.</p>
+    <ol class="timetable">
+      <li>
+        <div class="lesson-no"><b>1</b>08:30</div>
+        <div>
+          <h3>Первое сентября</h3>
+          <p>Белые банты выше головы, букет тяжелее портфеля, а портфель тяжелее вас. Вы стояли на линейке и очень старались не моргать.</p>
+        </div>
+      </li>
+      <li>
+        <div class="lesson-no"><b>2</b>09:25</div>
+        <div>
+          <h3>Первая пятёрка</h3>
+          <p>Красная ручка учителя и ровная цифра в тетради. Вы несли её домой как медаль и показали всем, кто попался по дороге, включая кота.</p>
+        </div>
+      </li>
+      <li>
+        <div class="lesson-no"><b>3</b>10:20</div>
+        <div>
+          <h3>Дневник</h3>
+          <p>Двойка, спрятанная между страницами. Подпись мамы, подозрительно похожая на вашу. Не волнуйтесь, я никому не скажу.</p>
+        </div>
+      </li>
+      <li>
+        <div class="lesson-no"><b>4</b>11:15</div>
+        <div>
+          <h3>Большая перемена</h3>
+          <p>Булочка из столовой, записка через три парты, шёпот «дай списать». Звонок, и весь коридор превращается в реку.</p>
+        </div>
+      </li>
+      <li class="last">
+        <div class="lesson-no"><b>5</b>12:10</div>
+        <div>
+          <h3>Ваш первый класс</h3>
+          <p>Тот день, когда вы сами вошли в класс с журналом в руках. Все встали, и вы впервые услышали «здравствуйте, учитель». <strong>Сегодня вам говорит это ещё один ваш ученик.</strong></p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section>
+    <fieldset>
+      <legend class="eyebrow">Устный опрос</legend>
+      <h2>Признание у доски</h2>
+      <p>Теперь вопросы по вашей стороне стола. Отметьте то, что было и с вами.</p>
+      <div class="confess-list" id="confess">
+        <label class="check"><input type="checkbox"><span>Делали вид, что не заметили шпаргалку</span></label>
+        <label class="check"><input type="checkbox"><span>Говорили «я не сержусь, я просто расстроена»</span></label>
+        <label class="check"><input type="checkbox"><span>Проверяли тетради допоздна</span></label>
+        <label class="check"><input type="checkbox"><span>Узнавали ученика по почерку, не глядя на обложку</span></label>
+        <label class="check"><input type="checkbox"><span>Радовались про себя, когда кто-то наконец понял тему</span></label>
+      </div>
+      <p class="verdict" id="verdict" aria-live="polite">Нажмите на то, что было и с вами.</p>
+    </fieldset>
+  </section>
+
+  <section class="thanks">
+    <div class="eyebrow">Слова благодарности</div>
+    <h2>А теперь серьёзно</h2>
+    <p>Школа давно закончилась, а ваши уроки всё ещё со мной. Спасибо, что объясняли второй раз, третий раз и, если надо, у доски с самого начала.</p>
+    <ul class="fives">
+      <li><span>За терпение, когда домашнее задание оставалось дома</span></li>
+      <li><span>За то, что верили в меня, даже когда я сам не очень</span></li>
+      <li><span>За уроки, которые я понимаю только сейчас</span></li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="eyebrow">Листок в конце тетради</div>
+    <h2>Ваша очередь писать</h2>
+    <p>Напишите письмо вашему ученику Шахруху Пиримбетову. Пару строк или целую страницу, как захочется. Подпишитесь в конце.</p>
+    <form class="letter-card" id="letterForm" novalidate>
+      <div class="letter-head"><span>Письмо ученику</span><span>1 октября</span></div>
+      <div class="letter-to">Дорогой Шахрух!</div>
+      <textarea id="letter" name="text" maxlength="3000" aria-label="Текст письма" placeholder="Начните писать здесь..." required></textarea>
+      <div class="letter-foot">
+        <span class="counter" id="counter">0 / 3000</span>
+        <button class="send" id="send" type="submit">Отправить письмо</button>
+      </div>
+      <p class="form-msg" id="formMsg" role="status" aria-live="polite"></p>
+    </form>
+  </section>
+
+  <section id="results" hidden>
+    <div class="eyebrow">Только для Шахруха</div>
+    <h2>Письма</h2>
+    <div class="letters" id="letters"></div>
+    <button class="send" id="refresh" type="button">Обновить</button>
+  </section>
+
+  <footer class="final">
+    <div class="final-text">
+      <div class="with">С любовью и благодарностью,</div>
+      <div class="signature">Ваш ученик Шахрух Пиримбетов</div>
+    </div>
+    <div class="stamp" aria-hidden="true">Ученик<b>Шахрух</b>1 октября</div>
+  </footer>
+</main>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script>
+(function () {
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Если страницу отдаёт сам Flask, адрес относительный.
+     Если файл открыт с диска, идём на 127.0.0.1:5000 (CORS на сервере включён). */
+  var API = (location.protocol === 'http:' || location.protocol === 'https:') ? '' : 'http://127.0.0.1:5000';
+
+  /* Звонок */
+  var bell = document.getElementById('bell');
+  var bellNote = document.getElementById('bellNote');
+  var audioCtx = null;
+  function ding() {
+    try {
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!audioCtx) audioCtx = new AC();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      var t = audioCtx.currentTime;
+      [[880, 0.35], [1760, 0.18], [2640, 0.09]].forEach(function (p) {
+        var o = audioCtx.createOscillator();
+        var g = audioCtx.createGain();
+        o.type = 'sine';
+        o.frequency.value = p[0];
+        g.gain.setValueAtTime(p[1], t);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + 2.2);
+        o.connect(g); g.connect(audioCtx.destination);
+        o.start(t); o.stop(t + 2.3);
+      });
+    } catch (e) {}
+  }
+  bell.addEventListener('click', function () {
+    bell.classList.remove('ring');
+    void bell.offsetWidth;
+    bell.classList.add('ring');
+    bellNote.textContent = 'Дзинь! Перемена закончилась, начинается урок благодарности.';
+    ding();
+  });
+
+  /* Признание у доски */
+  var boxes = document.querySelectorAll('#confess input');
+  var verdict = document.getElementById('verdict');
+  function updateVerdict() {
+    var n = 0;
+    boxes.forEach(function (b) { if (b.checked) n++; });
+    var text, sub = '';
+    if (n === 0) { text = 'Нажмите на то, что было и с вами.'; }
+    else if (n <= 2) { text = 'Так и думал.'; sub = 'Не переживайте, я никому не скажу.'; }
+    else if (n <= 4) { text = 'Отмечено ' + n + ' из 5. Значит, вы всё видели и всё равно нас любили.'; }
+    else { text = 'Отмечено 5 из 5. Вы были самым внимательным учителем на свете.'; sub = 'Спасибо, что замечали даже то, что мы прятали.'; }
+    verdict.innerHTML = '';
+    verdict.appendChild(document.createTextNode(text));
+    if (sub) { var s = document.createElement('small'); s.textContent = sub; verdict.appendChild(s); }
+  }
+  boxes.forEach(function (b) { b.addEventListener('change', updateVerdict); });
+
+  /* Письмо */
+  var form = document.getElementById('letterForm');
+  var letter = document.getElementById('letter');
+  var counter = document.getElementById('counter');
+  var sendBtn = document.getElementById('send');
+  var formMsg = document.getElementById('formMsg');
+  var DRAFT_KEY = 'letter-draft';
+  function say(t) { formMsg.textContent = t; }
+  function updateCounter() { counter.textContent = letter.value.length + ' / 3000'; }
+  try { var saved = localStorage.getItem(DRAFT_KEY); if (saved) letter.value = saved; } catch (e) {}
+  updateCounter();
+  letter.addEventListener('input', function () {
+    updateCounter();
+    try { localStorage.setItem(DRAFT_KEY, letter.value); } catch (e) {}
+  });
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var text = letter.value.trim();
+    if (text.length < 5) { say('Письмо пока пустое. Напишите хотя бы пару слов.'); return; }
+    sendBtn.disabled = true;
+    say('Отправляем...');
+    fetch(API + '/data', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text: text })
+    }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(function () {
+      say('Письмо отправлено. Спасибо вам, Гульмира Кенесбаевна!');
+      letter.disabled = true;
+      try { localStorage.removeItem(DRAFT_KEY); } catch (e) {}
+      burst();
+    }).catch(function () {
+      sendBtn.disabled = false;
+      say('Не получилось отправить. Проверьте, что сервер запущен, и попробуйте ещё раз. Текст письма сохранён.');
+    });
+  });
+
+  /* Письма: откройте адрес страницы с #results в конце */
+  var resultsSec = document.getElementById('results');
+  var lettersEl = document.getElementById('letters');
+  function renderLetters(list) {
+    lettersEl.innerHTML = '';
+    var items = (list || []).filter(function (t) { return typeof t === 'string' && t.trim() !== ''; });
+    if (!items.length) {
+      var p = document.createElement('p');
+      p.className = 'empty';
+      p.textContent = 'Пока писем нет.';
+      lettersEl.appendChild(p);
+      return;
+    }
+    items.forEach(function (t, i) {
+      var art = document.createElement('article');
+      art.className = 'letter';
+      var no = document.createElement('div');
+      no.className = 'letter-no';
+      no.textContent = 'Письмо ' + (i + 1);
+      var body = document.createElement('div');
+      body.className = 'letter-text';
+      body.textContent = t;
+      art.appendChild(no);
+      art.appendChild(body);
+      lettersEl.appendChild(art);
+    });
+  }
+  function loadLetters() {
+    fetch(API + '/data').then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    }).then(renderLetters).catch(function () {
+      lettersEl.innerHTML = '';
+      var p = document.createElement('p');
+      p.className = 'empty';
+      p.textContent = 'Не удалось загрузить письма. Сервер запущен?';
+      lettersEl.appendChild(p);
+    });
+  }
+  function showView() {
+    var on = location.hash === '#results';
+    document.body.classList.toggle('view-results', on);
+    resultsSec.hidden = !on;
+    if (on) loadLetters();
+  }
+  document.getElementById('refresh').addEventListener('click', loadLetters);
+  window.addEventListener('hashchange', showView);
+  showView();
+
+  /* Конфетти */
+  var canvas = document.getElementById('confetti');
+  var running = false;
+  function burst() {
+    if (reduce || running) return;
+    var cs = getComputedStyle(document.documentElement);
+    var colors = ['--pen', '--red', '--sticker', '--margin'].map(function (k) { return cs.getPropertyValue(k).trim() || '#2B49B5'; });
+    var dpr = window.devicePixelRatio || 1;
+    var w = window.innerWidth, h = window.innerHeight;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    var ctx = canvas.getContext('2d');
+    ctx.scale(dpr, dpr);
+    var parts = [];
+    for (var i = 0; i < 140; i++) {
+      parts.push({
+        x: Math.random() * w, y: -20 - Math.random() * h * 0.4,
+        vx: (Math.random() - 0.5) * 2.4, vy: 2 + Math.random() * 3.5,
+        r: Math.random() * Math.PI, vr: (Math.random() - 0.5) * 0.3,
+        s: 6 + Math.random() * 6, c: colors[i % colors.length]
+      });
+    }
+    running = true;
+    var start = performance.now();
+    (function frame(now) {
+      var elapsed = now - start;
+      ctx.clearRect(0, 0, w, h);
+      parts.forEach(function (p) {
+        p.x += p.vx; p.y += p.vy; p.r += p.vr;
+        ctx.save();
+        ctx.translate(p.x, p.y); ctx.rotate(p.r);
+        ctx.fillStyle = p.c;
+        ctx.fillRect(-p.s / 2, -p.s / 4, p.s, p.s / 2);
+        ctx.restore();
+      });
+      if (elapsed < 3200) { requestAnimationFrame(frame); }
+      else { ctx.clearRect(0, 0, w, h); running = false; }
+    })(start);
+  }
+})();
+</script>
+</body>
+</html>
